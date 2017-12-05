@@ -14,27 +14,24 @@ class Avaliador
     {
         $lances = $leilao->getLances();
         if (empty($lances)) {
-            $this->maiorDeTodos = 0;
-            $this->menorDeTodos = 0;
-            $this->valorMedio = 0;
+            throw new \RuntimeException();
         }
-        else {
-            foreach ($lances as $lance) {
-                if ($lance->getValor() > $this->maiorDeTodos) {
-                    $this->maiorDeTodos = $lance->getValor();
-                }
-                
-                if ($lance->getValor() < $this->menorDeTodos) {
-                    $this->menorDeTodos = $lance->getValor();
-                }
-                
-                $this->valorMedio += $lance->getValor();
+        
+        foreach ($lances as $lance) {
+            if ($lance->getValor() > $this->maiorDeTodos) {
+                $this->maiorDeTodos = $lance->getValor();
             }
             
-            $this->valorMedio = $this->valorMedio / count($lances);
+            if ($lance->getValor() < $this->menorDeTodos) {
+                $this->menorDeTodos = $lance->getValor();
+            }
             
-            $this->pegaOsTresMaiores($leilao);
-        }        
+            $this->valorMedio += $lance->getValor();
+        }
+        
+        $this->valorMedio = $this->valorMedio / count($lances);
+        
+        $this->pegaOsTresMaiores($leilao);              
     }
     
     /**
