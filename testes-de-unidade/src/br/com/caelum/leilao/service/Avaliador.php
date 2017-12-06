@@ -82,4 +82,8 @@ class Avaliador
         return $this->maiores;
     }
 
+    public function getMaiorLance()
+    {
+        
+    }
 }
