@@ -36,13 +36,15 @@ class LeilaoDao {
         $stmt->bindParam("usado",$usado,PDO::PARAM_BOOL);
         $stmt->bindParam("encerrado",$encerrado,PDO::PARAM_BOOL);
         
-        $stmt->execute();
+        $res = $stmt->execute();
         
         $leilao->setId($this->con->lastInsertId());
         
         foreach ($leilao->getLances() as $lance){
             $this->salvarLance($lance);
         }
+        
+        return $res;
     }
 	
 	private function salvarLance(Lance $lance)
@@ -184,13 +186,14 @@ class LeilaoDao {
 	public function deletaEncerrados() {
 	    $stmt = $this->con->prepare("DELETE FROM Leilao WHERE encerrado = true");
 	    $stmt->execute();
+	    //var_dump($this->con->errorInfo());
 	}
 	
 	public function listaLeiloesDoUsuario(Usuario $usuario)
 	{
 	    $usuarioId = $usuario->getId();
 	    
-	    $stmt = $this->con->prepare("SELECT le.* FROM Leilao AS le 
+	    $stmt = $this->con->prepare("SELECT DISTINCT le.* FROM Leilao AS le 
             JOIN Lance la 
             ON la.leilao = le.id 
             JOIN Usuario u 
@@ -207,6 +210,7 @@ class LeilaoDao {
 	public function getValorInicialMedioDoUsuario(Usuario $usuario)
 	{
 	    $usuarioId = $usuario->getId();
+	    
 	    $stmt = $this->con->prepare("SELECT AVG(le.valorInicial) FROM Leilao as le 
             JOIN Lance la 
             ON la.leilao = le.id 

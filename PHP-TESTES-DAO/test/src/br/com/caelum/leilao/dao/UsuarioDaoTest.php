@@ -46,5 +46,33 @@ class UsuarioDaoTest extends TestCase
         
         $this->assertFalse($usuarioDoBanco);
     }
+    
+    public function testDeveDeletarUmUsuario()
+    {
+        $usuario = new Usuario("Zé", "ze@gmail.com");
+        
+        $this->usuarioDao->salvar($usuario);
+        $this->usuarioDao->deletar($usuario);
+        
+        $usuarioDoBanco = $this->usuarioDao->porNomeEEmail($usuario->getNome(), $usuario->getEmail());
+        
+        $this->assertFalse($usuarioDoBanco);
+    }
+    
+    public function testDeveAtualizarUmUsuario()
+    {
+        $usuario = new Usuario("Zé", "ze@gmail.com");
+        $this->usuarioDao->salvar($usuario);
+               
+        $usuario->setNome("Celso");
+        $usuario->setEmail("celso@lopes.com.br");
+        $this->usuarioDao->atualizar($usuario);
+        
+        $usuarioDoBancoAlterado = $this->usuarioDao->porNomeEEmail("Celso", "celso@lopes.com.br");
+        $usuarioDoBancoAntigo = $this->usuarioDao->porNomeEEmail("Zé", "ze@gmail.com");
+        
+        $this->assertFalse($usuarioDoBancoAntigo);
+        $this->assertEquals($usuario->getId(), $usuarioDoBancoAlterado->getId());
+    }
 }
 
